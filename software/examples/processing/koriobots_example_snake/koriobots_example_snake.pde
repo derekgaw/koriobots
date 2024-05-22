@@ -35,6 +35,18 @@ float bounds_height = 0;
 
 boolean is_inside = false;
 
+// Setup sine wave
+int xspacing = 50;   // How far apart should each horizontal location be spaced
+int w;              // Width of entire wave
+
+float theta = 0.0;  // Start angle at 0
+float amplitude = 75;  // Height of wave
+float period = 500;  // How many pixels before the wave repeats
+float dx;  // Value for incrementing X, a function of period and xspacing
+float[] yvalues;  // Using an array to store height values for the wave
+
+
+
 void setup() {
   size(800, 1000);
   oscP5 = new OscP5(this, port_receive);
@@ -46,6 +58,11 @@ void setup() {
   bounds_height = bounds_width;
   bounds_x = width/2 - bounds_width/2;
   bounds_y = height/2 - bounds_width/3;
+ 
+  w = width+160;
+  dx = (TWO_PI / period) * xspacing;
+  yvalues = new float[w/xspacing];
+  
 }
 
 void draw() {
@@ -127,6 +144,18 @@ void mouseReleased() {
   }
 }
 
+void calcWave() {
+
+  // For every x value, calculate a y value with sine function
+  float x = theta;
+  for (int i = 0; i < yvalues.length; i++) {
+    yvalues[i] = sin(x)*amplitude;
+    x+=dx;
+    print(yvalues[i]);
+    waypoints.add(new PVector(x*30 + bounds_x + 10, yvalues[i]+ bounds_y + bounds_height/2));
+  }
+}
+
 /**
  *  Incoming OSC message are forwarded to the oscEvent method.
  */
@@ -180,6 +209,9 @@ void controlEvent(ControlEvent theEvent) {
       msg.add(theEvent.getController().getValue());
     } else if (theEvent.getController().getName() == "reset_w") {
       waypoints.clear();
+    } else if (theEvent.getController().getName() == "load_w") {
+      print("loading waypoints ");
+      calcWave();
     }
     oscP5.send(msg, server_addr);
   }
@@ -229,8 +261,18 @@ void setup_gui() {
     .setGroup(params)
     ;
     
-  cp5.addButton("play_w")
+    
+  cp5.addButton("load_w")
     .setPosition(x, x + h* 5)
+    .setSize(h*2, h*2)
+    .setGroup(params)
+    .setColorBackground(color(0, 120, 0))
+    .setColorForeground(color(0, 180, 0))
+    .setColorActive(color(0, 250, 0))
+    ;    
+    
+  cp5.addButton("play_w")
+    .setPosition(x * 2 + h * 2, x + h* 5)
     .setSize(h*2, h*2)
     .setGroup(params)
     .setColorBackground(color(0, 120, 0))
