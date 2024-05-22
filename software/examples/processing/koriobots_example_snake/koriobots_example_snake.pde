@@ -44,6 +44,7 @@ float amplitude = 75;  // Height of wave
 float period = 500;  // How many pixels before the wave repeats
 float dx;  // Value for incrementing X, a function of period and xspacing
 float[] yvalues;  // Using an array to store height values for the wave
+float[] xvalues;  // Using an array to store height values for the circle and wave
 
 
 
@@ -62,6 +63,7 @@ void setup() {
   w = width+160;
   dx = (TWO_PI / period) * xspacing;
   yvalues = new float[w/xspacing];
+  xvalues = new float[w/xspacing];
   
 }
 
@@ -129,6 +131,15 @@ void mousePressed() {
     oscP5.send(msg, server_addr);
   }
 }
+/*
+void SendtoWaypoint() {
+  if (is_inside){
+    OscMessage msg = new OscMessage("/move_vel");
+    msg.add(true);    
+    oscP5.send(msg, server_addr);
+  }
+}
+ */
 
 /**
  *  Stop moving the koriobots if we released the mouse button.
@@ -153,6 +164,33 @@ void calcWave() {
     x+=dx;
     print(yvalues[i]);
     waypoints.add(new PVector(x*30 + bounds_x + 10, yvalues[i]+ bounds_y + bounds_height/2));
+  }
+}
+
+
+void calcLissajous() {
+
+  // For every x and y value, calculate the Lissajous function
+  float x = theta;
+  for (int i = 0; i < yvalues.length; i++) {
+    xvalues[i] = sin(x)*amplitude;
+    yvalues[i] = cos(x*3)*amplitude;
+    x+=dx/2;
+    print(yvalues[i]);
+    waypoints.add(new PVector(xvalues[i] + bounds_x + bounds_width/2, yvalues[i]+ bounds_y + bounds_height/2));
+  }
+}
+
+void calcCircle() {
+
+  // For every x value, calculate a y value with circle function
+  float x = theta;
+  for (int i = 0; i < yvalues.length; i++) {
+    xvalues[i] = sin(x)*amplitude;
+    yvalues[i] = cos(x)*amplitude;
+    x+=dx;
+    print(yvalues[i]);
+    waypoints.add(new PVector(xvalues[i] + bounds_x + bounds_width/2, yvalues[i]+ bounds_y + bounds_height/2));
   }
 }
 
@@ -209,10 +247,16 @@ void controlEvent(ControlEvent theEvent) {
       msg.add(theEvent.getController().getValue());
     } else if (theEvent.getController().getName() == "reset_w") {
       waypoints.clear();
-    } else if (theEvent.getController().getName() == "load_w") {
-      print("loading waypoints ");
+    } else if (theEvent.getController().getName() == "load_c") {
+      print("loading circle waypoints ");
+      calcCircle();
+    } else if (theEvent.getController().getName() == "load_s") {
+      print("loading sine waypoints ");
       calcWave();
-    }
+    } else if (theEvent.getController().getName() == "load_l") {
+      print("loading Lissajoux  waypoints ");
+      calcLissajous();
+  }
     oscP5.send(msg, server_addr);
   }
 }
@@ -233,7 +277,7 @@ void setup_gui() {
     .setHeight(15)
     .activateEvent(true)
     .setBackgroundColor(color(255, 120))
-    .setBackgroundHeight(300)
+    .setBackgroundHeight(450)
     .setLabel("Koriobot Controller")
     ;
 
@@ -262,7 +306,7 @@ void setup_gui() {
     ;
     
     
-  cp5.addButton("load_w")
+  cp5.addButton("load_s")
     .setPosition(x, x + h* 5)
     .setSize(h*2, h*2)
     .setGroup(params)
@@ -270,6 +314,24 @@ void setup_gui() {
     .setColorForeground(color(0, 180, 0))
     .setColorActive(color(0, 250, 0))
     ;    
+    
+  cp5.addButton("load_c")
+    .setPosition(x, x + h* 8)
+    .setSize(h*2, h*2)
+    .setGroup(params)
+    .setColorBackground(color(0, 120, 0))
+    .setColorForeground(color(0, 180, 0))
+    .setColorActive(color(0, 250, 0))
+    ;     
+    
+  cp5.addButton("load_l")
+    .setPosition(x, x + h* 11)
+    .setSize(h*2, h*2)
+    .setGroup(params)
+    .setColorBackground(color(0, 120, 0))
+    .setColorForeground(color(0, 180, 0))
+    .setColorActive(color(0, 250, 0))
+    ;         
     
   cp5.addButton("play_w")
     .setPosition(x * 2 + h * 2, x + h* 5)
@@ -281,7 +343,7 @@ void setup_gui() {
     ;    
 
   cp5.addButton("reset_w")
-    .setPosition(x, x + h* 8)
+    .setPosition(x, x + h* 14)
     .setSize(h*2, h*2)
     .setGroup(params)
     .setColorBackground(color(120, 0, 0))
