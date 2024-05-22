@@ -181,7 +181,7 @@ void setup_gui() {
     .setHeight(15)
     .activateEvent(true)
     .setBackgroundColor(color(255, 120))
-    .setBackgroundHeight(150)
+    .setBackgroundHeight(300)
     .setLabel("Koriobot Controller")
     ;
 
@@ -208,6 +208,24 @@ void setup_gui() {
     .setPosition(x+h, x + h*3 + 8)
     .setGroup(params)
     ;
+    
+  cp5.addButton("play_w")
+    .setPosition(x, x + h* 5)
+    .setSize(h*2, h*2)
+    .setGroup(params)
+    .setColorBackground(color(0, 120, 0))
+    .setColorForeground(color(0, 180, 0))
+    .setColorActive(color(0, 250, 0))
+    ;    
+
+  cp5.addButton("reset_w")
+    .setPosition(x, x + h* 8)
+    .setSize(h*2, h*2)
+    .setGroup(params)
+    .setColorBackground(color(120, 0, 0))
+    .setColorForeground(color(180, 0, 0))
+    .setColorActive(color(259, 0, 0))
+    ;    
 
   // Set up MOTION parameters
   Group params_motion = cp5.addGroup("params_motion")
