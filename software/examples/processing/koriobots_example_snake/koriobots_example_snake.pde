@@ -22,7 +22,7 @@ NetAddress server_addr;
 ControlP5 cp5;
 
 // Change these to match the koriobot server osc settings
-String host = "127.0.0.1";   // ip address of the koriobot server
+String host = "192.168.1.130";   // ip address of the koriobot server
 int port_send = 55555;       // receiving port of the koriobot server
 int port_receive = 55556;    // sending port of the koriobot server
 
@@ -274,7 +274,7 @@ void setup_gui() {
     .setMax(1)
     .setGroup(params_bounds)
     ;
-
+/*
   // Set up LIMITS parameters
   Group params_limits = cp5.addGroup("params_limits")
     .setPosition(x+580, y + 10)
@@ -300,5 +300,5 @@ void setup_gui() {
     .setMin(0)
     .setMax(1)
     .setGroup(params_limits)
-    ;
+    ;*/
 }
