@@ -73,12 +73,13 @@ void draw() {
   // move the koriobot's target with the mouse if we are inside the safety bounds
   if (is_inside) {
     // normalize the mouse position based on the safety bounds
-    float x = map(mouseX, bounds_x, bounds_x+bounds_width, 0, 1);
-    float y = map(mouseY, bounds_y, bounds_y+bounds_height, 0, 1);
+    float x = map(waypoints.get(0).x, bounds_x, bounds_x+bounds_width, 0, 1);
+    float y = map(waypoints.get(0).y, bounds_y, bounds_y+bounds_height, 0, 1);
     OscMessage msg = new OscMessage("/norm");
     msg.add(-1);    // use the -1 index to move all koriobots
     msg.add(x);
     msg.add(y);
+    print(msg);
     oscP5.send(msg, server_addr);
 
     // highlight the bounds when the mouse is inside 
@@ -256,11 +257,12 @@ void controlEvent(ControlEvent theEvent) {
     } else if (theEvent.getController().getName() == "load_l") {
       print("loading Lissajoux  waypoints ");
       calcLissajous();
-  }
-    oscP5.send(msg, server_addr);
+    } else if (theEvent.getController().getName() == "play_w") {
+      print("Playing waypoints ");
+      draw();
+      }
   }
 }
-
 
 void setup_gui() {
   cp5 = new ControlP5(this);
