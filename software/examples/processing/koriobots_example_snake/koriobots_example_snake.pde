@@ -20,6 +20,7 @@ OscP5 oscP5;
 NetAddress server_addr;
 
 ControlP5 cp5;
+ArrayList<PVector> waypoints = new ArrayList<PVector>();
 
 // Change these to match the koriobot server osc settings
 String host = "192.168.1.130";   // ip address of the koriobot server
@@ -62,10 +63,10 @@ void draw() {
     oscP5.send(msg, server_addr);
 
     // highlight the bounds when the mouse is inside 
-    fill(250, 0, 250, 80);
+    /*fill(250, 0, 250, 80);
     rect(bounds_x, bounds_y, bounds_width, bounds_height);
     fill(255, 0, 255);
-    ellipse(mouseX, mouseY, 10, 10);
+    ellipse(mouseX, mouseY, 10, 10);*/
     line(mouseX, bounds_y, mouseX, bounds_y+bounds_height);
     line(bounds_x, mouseY, bounds_x+bounds_width, mouseY);
     if (mousePressed){
@@ -78,6 +79,20 @@ void draw() {
   noFill();
   stroke(250, 0, 250);
   rect(bounds_x, bounds_y, bounds_width, bounds_height);
+  
+  for (int i = 0; i < waypoints.size(); i++) {
+    PVector point = waypoints.get(i);
+    square(point.x - 5, point.y - 5, 10);
+  }
+  if (waypoints.size() >= 2) {
+    stroke(255);
+    for (int i = 1; i < waypoints.size(); i++) {
+      PVector a = waypoints.get(i -1);
+      PVector b = waypoints.get(i);
+      line(a.x, a.y, b.x, b.y);
+    }
+    stroke(250, 0, 250);
+  }
 }
 
 /**
@@ -103,6 +118,9 @@ void mousePressed() {
  */
 void mouseReleased() {
   if (is_inside){
+    waypoints.add(new PVector(mouseX, mouseY));
+    print(mouseX + " ");
+    
     OscMessage msg = new OscMessage("/move_vel");
     msg.add(false);    
     oscP5.send(msg, server_addr);
