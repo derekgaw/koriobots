@@ -178,6 +178,8 @@ void controlEvent(ControlEvent theEvent) {
     } else if (theEvent.getController().getName() == "accel") {
       msg = new OscMessage("/limits/acceleration");
       msg.add(theEvent.getController().getValue());
+    } else if (theEvent.getController().getName() == "reset_w") {
+      waypoints.clear();
     }
     oscP5.send(msg, server_addr);
   }
