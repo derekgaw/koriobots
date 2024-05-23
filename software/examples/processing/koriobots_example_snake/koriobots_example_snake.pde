@@ -123,7 +123,6 @@ void draw() {
       tick++;
       if (tick > updateLimit) {
         tick = 0;
-        println("coords");
         sendNormPos(0, cableBotAPos.x, cableBotAPos.y);
         sendNormPos(1, cableBotBPos.x, cableBotBPos.y);
         sendNormPos(2, cableBotCPos.x, cableBotCPos.y);
@@ -286,6 +285,7 @@ void controlEvent(ControlEvent theEvent) {
         isPlaying = false;
         if (waypoints.size() >= 1) {
           // move all to starting waypoint
+          println("move to starting waypoint");
           sendNormPos(-1, waypoints.get(0).x, waypoints.get(0).y);
         }
         break;
