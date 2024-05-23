@@ -252,8 +252,8 @@ void sendNormPos(int index, float x, float y) {
   float yNorm = (y - bounds_y) / bounds_height;
   OscMessage msg = new OscMessage("/norm");
   msg.add(index);
-  msg.add(x);
-  msg.add(y);
+  msg.add(xNorm);
+  msg.add(yNorm);
   //println(x, y, xNorm, yNorm);
   oscP5.send(msg, server_addr);
 }
